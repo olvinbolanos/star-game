@@ -28,12 +28,23 @@ const PlayNumber = props => {
 }
 // a number is once when it is not in the available numbers array
 
+const PlayAgain = props => {
+  return (
+  <button className="game-done">
+    <button>Play Again</button>
+  </button>
+  )
+}
+
 const StarMatch = () => {
   const [stars, setStars] = useState(utils.random(1, 9));
   const [availableNums, setAvailableNums] = useState(utils.range(1, 9))
   const [candidateNums, setCandidateNums] = useState([])
   
   const candidatesAreWrong = utils.sum(candidateNums) > stars;
+  const gameIsDone = availableNums.length === 0;
+      
+   
   
   const numberStatus = (number) => {
     if (!availableNums.includes(number)) {
@@ -52,7 +63,11 @@ const StarMatch = () => {
     if(currentStatus == 'used') {
       return;
     }
-    const newCandidateNums = candidateNums.concat(number)
+    const newCandidateNums = 
+    currentStatus === 'available'
+    ? candidateNums.concat(number)
+    : candidateNums.filter(cn => cn !== number)
+
     if (utils.sum(newCandidateNums) !== stars) {
       setCandidateNums(newCandidateNums);
 
@@ -74,7 +89,12 @@ const StarMatch = () => {
       </div>
       <div className="body">
         <div className="left">
-          <StarDisplay count={stars} />
+          {gameIsDone ? (
+              <PlayAgain />
+            ) : (
+              <StarDisplay count={stars} />
+            )
+          }
         </div>
         <div className="right">
         	{utils.range(1, 9).map(number =>
